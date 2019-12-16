@@ -1,7 +1,4 @@
-;基本功能
-;差pause和dis_num
-;还差蜂鸣报警
-;还有继电器提示
+
 
 address8254  equ 280h
 
@@ -118,7 +115,7 @@ begin:                      ;输入密码，主程序段
     ;mov bx,[count0]         ;若都不是，则放入buffer中
     mov di,offset buffer
     mov [di],cl
-    
+    call dis_num            ;输入值后显示该数字
     inc di
     cmp di,06H
     jnz begin
@@ -135,6 +132,7 @@ renz:                       ;跳转到密码比对
 backbegin:                  ;海关锁置0，count0置0，返回begin
     mov [hglock],00h 
     mov [count0],00h
+    mov byte ptr HZ_ADR,90H ;lcd的显示在第二行
     jmp jbegin
 
 hgset:                      ;设海关变量hglock为1
@@ -334,6 +332,7 @@ modify:
         ;若都不是，则放入buffer中
     mov di,offset buffer
     mov [di],cl
+    call dis_star       ;输入值后显示*号
     inc di
     jnz modify
 
@@ -596,34 +595,65 @@ DELAYx          PROC
 DELAYx          ENDP
 
 
-DIS_NUM PROC            ;具体我也不懂但是只要把bx设成正确的值就可以work
-MOV AL,0ffh;初始
-MOV DX,IO_ADDRESS
-OUT DX,AL
+dis_num proc
+    mov al,0ffh
+    mov dx,IO_ADDRESS
+    out dx,al
 
-MOV AL,HZ_ADR;显示字地址
-MOV DX, IO_ADDRESS
-OUT DX, AL
-CALL CMD_SETUP          ;设定DDRAM地址命令
+    mov al,HZ_ADR
+    mov dx,IO_ADDRESS
+    out dx,al
+    call CMD_SETUP
 
-mov ch,00h
-mov bx,cx-'1'+0001h
-MOV AX,NUM[BX]          ;bx是0000h,0001h,0002h,0003h,0004h ... 到000fh
-PUSH AX
-MOV AL,AH               ;先送汉字编码高位
-MOV DX,IO_ADDRESS
-OUT DX,AL
-CALL DATA_SETUP         ;输出汉字编码高字节
-CALL DELAY2              ;延迟
-POP AX
-MOV DX,IO_ADDRESS
-OUT DX, AL
-CALL DATA_SETUP         ;输出汉字编码低字节
-CALL DELAY2
-INC BYTE PTR HZ_ADR     ;修改LCD显示端口地址
-RET
-DIS_NUM ENDP
+    mov cl,[key_in]
+    sub cl,30h 
+    mov ch,00h
+    mov bx,cx
 
+    mov ax,djs[bx]
+    push ax
+    mov al,ah
+    mov dx,IO_ADDRESS
+    out dx,al
+    call DATA_SETUP
+    call delay2
+
+    pop ax
+    mov dx,IO_ADDRESS
+    out dx,al
+    call DATA_SETUP
+    call delay2
+    inc byte ptr HZ_ADR
+    ret
+dis_num endp
+
+dis_star proc
+mov al,0ffh
+    mov dx,IO_ADDRESS
+    out dx,al
+
+    mov al,HZ_ADR
+    mov dx,IO_ADDRESS
+    out dx,al
+    call CMD_SETUP
+
+    mov ax,0a3aah
+    push ax
+
+    mov al,ah           ;输出高位
+    mov dx,IO_ADDRESS
+    out dx,al
+    call DATA_SETUP
+    call delay2
+
+    pop ax              ;输出低位
+    mov dx,IO_ADDRESS
+    out dx,al
+    call DATA_SETUP
+    call delay2
+    inc byte ptr HZ_ADR ;修改显示端口地址
+    ret
+dis_star endp
 
 
 
