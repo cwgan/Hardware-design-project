@@ -1,5 +1,3 @@
-
-
 address8254  equ 280h
 
 a8255        equ 288H    ;8255 A口    
@@ -176,23 +174,23 @@ errostart:
     ;jz gopause              ;8254怎么接？
 
 
-         MOV AX,DATA
-                MOV DS,AX               
-                MOV DX,IO_ADDRESS
-                ADD DX,3
-                MOV AL,80H
-                OUT DX,AL                       ;8255初始化
-               ;mov al,0ffh
-               ;mov dx,300H
-               ;out dx, al
-                CALL CLEAR              ;LCD 清除
-          ;     CALL FUNCUP              ;LCD 功能设置
-                LEA BX, hz_tab2
-                MOV CH,2                        ;显示第2行信息 
-                CALL  LCD_DISP
-                LEA BX, hz_tab2
-                MOV CH,3                  ;    显示第3行信息
-                CALL LCD_DISP
+    MOV AX,DATA
+    MOV DS,AX               
+    MOV DX,IO_ADDRESS
+    ADD DX,3
+    MOV AL,80H
+    OUT DX,AL                   ;8255初始化
+    ;mov al,0ffh
+    ;mov dx,300H
+    ;out dx, al
+    CALL CLEAR                  ;LCD 清除
+    ;CALL FUNCUP                ;LCD 功能设置
+    LEA BX, hz_tab2
+    MOV CH,2                    ;显示第2行信息 
+    CALL  LCD_DISP
+    LEA BX, hz_tab2
+    MOV CH,3                    ;显示第3行信息
+    CALL LCD_DISP
 
 
 
@@ -236,47 +234,47 @@ succstart:
     jmp hgunlock
     
 hgunlock:
-            MOV AX,DATA
-                MOV DS,AX               
-                MOV DX,IO_ADDRESS
-                ADD DX,3
-                MOV AL,80H
-                OUT DX,AL                       ;8255初始化
-               ;mov al,0ffh
-               ;mov dx,300H
-               ;out dx, al
-                CALL CLEAR              ;LCD 清除
-          ;     CALL FUNCUP              ;LCD 功能设置
-                LEA BX, haiguan
-                MOV CH,2                        ;显示第2行信息 
-                CALL  LCD_DISP
-                LEA BX, haiguan
-                MOV CH,3                  ;    显示第3行信息
-                CALL LCD_DISP
-        jmp succmain
+    MOV AX,DATA
+    MOV DS,AX               
+    MOV DX,IO_ADDRESS
+    ADD DX,3
+    MOV AL,80H
+    OUT DX,AL                       ;8255初始化
+    ;mov al,0ffh
+    ;mov dx,300H
+    ;out dx, al
+    CALL CLEAR              ;LCD 清除
+    ;CALL FUNCUP              ;LCD 功能设置
+    LEA BX, haiguan
+    MOV CH,2                        ;显示第2行信息 
+    CALL  LCD_DISP
+    LEA BX, haiguan
+    MOV CH,3                  ;    显示第3行信息
+    CALL LCD_DISP
+    jmp succmain
 unlock:
     MOV AX,DATA
-                MOV DS,AX               
-                MOV DX,IO_ADDRESS
-                ADD DX,3
-                MOV AL,80H
-                OUT DX,AL                       ;8255初始化
-               ;mov al,0ffh
-               ;mov dx,300H
-               ;out dx, al
-                CALL CLEAR              ;LCD 清除
-          ;     CALL FUNCUP              ;LCD 功能设置
-                LEA BX,  hz_tab1
-                MOV CH,2                        ;显示第2行信息 
-                CALL  LCD_DISP
-                LEA BX, hz_tab1
-                MOV CH,3                  ;    显示第3行信息
-                CALL LCD_DISP
+    MOV DS,AX               
+    MOV DX,IO_ADDRESS
+    ADD DX,3
+    MOV AL,80H
+    OUT DX,AL                       ;8255初始化
+    ;mov al,0ffh
+    ;mov dx,300H
+    ;out dx, al
+    CALL CLEAR              ;LCD 清除
+    ;CALL FUNCUP              ;LCD 功能设置
+    LEA BX,  hz_tab1
+    MOV CH,2                        ;显示第2行信息 
+    CALL  LCD_DISP
+    LEA BX, hz_tab1
+    MOV CH,3                  ;    显示第3行信息
+    CALL LCD_DISP
     jmp succmain
 
 succmain:
     ;开锁状态下的主程序，可以选择返回也可以选择
-     mov dx,k8255
+    mov dx,k8255
     mov al,81h
     out dx,al
  
@@ -294,23 +292,23 @@ succmain:
     
 
 changepin:
-                MOV AX,DATA
-                MOV DS,AX               
-                MOV DX,IO_ADDRESS
-                ADD DX,3
-                MOV AL,80H
-                OUT DX,AL                       ;8255初始化
-               ;mov al,0ffh
-               ;mov dx,300H
-               ;out dx, al
-                CALL CLEAR              ;LCD 清除
-          ;     CALL FUNCUP              ;LCD 功能设置
-                LEA BX, xiugai
-                MOV CH,2                        ;显示第2行信息 
-                CALL  LCD_DISP
-                LEA BX, xiugai
-                MOV CH,3                  ;    显示第3行信息
-                CALL LCD_DISP
+    MOV AX,DATA
+    MOV DS,AX               
+    MOV DX,IO_ADDRESS
+    ADD DX,3
+    MOV AL,80H
+    OUT DX,AL                       ;8255初始化
+    ;mov al,0ffh
+    ;mov dx,300H
+    ;out dx, al
+    CALL CLEAR              ;LCD 清除
+    ;CALL FUNCUP              ;LCD 功能设置
+    LEA BX, xiugai
+    MOV CH,2                        ;显示第2行信息 
+    CALL  LCD_DISP
+    LEA BX, xiugai
+    MOV CH,3                  ;    显示第3行信息
+    CALL LCD_DISP
     jmp modify
 
 modify:
@@ -365,22 +363,22 @@ changeloop:
 changesucc:
      
     MOV AX,DATA
-                MOV DS,AX               
-                MOV DX,IO_ADDRESS
-                ADD DX,3
-                MOV AL,80H
-                OUT DX,AL                       ;8255初始化
-               ;mov al,0ffh
-               ;mov dx,300H
-               ;out dx, al
-                CALL CLEAR              ;LCD 清除
-          ;     CALL FUNCUP              ;LCD 功能设置
-                LEA BX, xgcg
-                MOV CH,2                        ;显示第2行信息 
-                CALL  LCD_DISP
-                LEA BX, xgcg
-                MOV CH,3                  ;    显示第3行信息
-                CALL LCD_DISP
+    MOV DS,AX               
+    MOV DX,IO_ADDRESS
+    ADD DX,3
+    MOV AL,80H
+    OUT DX,AL                       ;8255初始化
+    ;mov al,0ffh
+    ;mov dx,300H
+    ;out dx, al
+    CALL CLEAR              ;LCD 清除
+    ;CALL FUNCUP              ;LCD 功能设置
+    LEA BX, xgcg
+    MOV CH,2                        ;显示第2行信息 
+    CALL  LCD_DISP
+    LEA BX, xgcg
+    MOV CH,3                  ;    显示第3行信息
+    CALL LCD_DISP
 
 
     mov dx,k8255
@@ -400,198 +398,205 @@ changesucc:
 
 key proc 
 key_loop:
-        mov ah,1
-        int 16h
-        jnz exit                    ;pc键盘有键按下则退出
+    mov ah,1
+    int 16h
+    jnz exit                    ;pc键盘有键按下则退出
        
-        mov dx,c8255
-        mov al,0fh
-        out dx,al
-        in al,dx                    ;读行扫描值
-        and al,0fh
-        cmp al,0fh
-        jz key_loop                 ;未发现有键按下则转
-        call delay                  ;delay for amoment
-        mov ah,al
-        MOV DX,k8255
-        mov al,88h
-        out dx,al
-        mov dx,c8255
-        mov al,ah
-        or al,0f0h
-        out dx,al
-        in al,dx                    ;读列扫描值
-        and al,0f0h
-        cmp al,0f0h
-        jz key_loop                 ;未发现有键按下则转
+    mov dx,c8255
+    mov al,0fh
+    out dx,al
+    in al,dx                    ;读行扫描值
+    and al,0fh
+    cmp al,0fh
+    jz key_loop                 ;未发现有键按下则转
+    call delay                  ;delay for amoment
+    mov ah,al
+    MOV DX,k8255
+    mov al,88h
+    out dx,al
+    mov dx,c8255
+    mov al,ah
+    or al,0f0h
+    out dx,al
+    in al,dx                    ;读列扫描值
+    and al,0f0h
+    cmp al,0f0h
+    jz key_loop                 ;未发现有键按下则转
         
-        mov si,offset table1        ;键盘扫描码表首址
-        mov di,offset char          ;字符表首址
-        mov cx,16                   ;待查表的表大小
+    mov si,offset table1        ;键盘扫描码表首址
+    mov di,offset char          ;字符表首址
+    mov cx,16                   ;待查表的表大小
 key_tonext:
-        cmp ax,[si]                 ;cmp (col,row) with every word
-        jz key_findkey              ;in the table
-        dec cx
-        jz key_loop                 ;未找到对应扫描码
-        add si,2
-        inc di
-        jmp key_tonext
+    cmp ax,[si]                 ;cmp (col,row) with every word
+    jz key_findkey              ;in the table
+    dec cx
+    jz key_loop                 ;未找到对应扫描码
+    add si,2
+    inc di
+    jmp key_tonext
 key_findkey:
-        mov dl,[di]
-        mov ah,02
-        int 21h            ;显示查找到的键盘码
-        mov byte ptr key_in,dl
+    mov dl,[di]
+    mov ah,02
+    int 21h            ;显示查找到的键盘码
+    mov byte ptr key_in,dl
 key_waitup:
-        MOV DX,k8255
-        mov al,81h
-        out dx,al
-        mov dx,c8255
-        mov al,0fh
-        out dx,al
-        in al,dx           ;读行扫描值
-        and al,0fh
-        cmp al,0fh
-        jnz key_waitup     ;按键未抬起转
-        call delay         ;delay for amoment
-        ret
-exit:        mov byte ptr key_in,'E'
+    MOV DX,k8255
+    mov al,81h
+    out dx,al
+    mov dx,c8255
+    mov al,0fh
+    out dx,al
+    in al,dx           ;读行扫描值
+    and al,0fh
+    cmp al,0fh
+    jnz key_waitup     ;按键未抬起转
+    call delay         ;delay for amoment
+    ret
+exit:       
+    mov [key_in],'E'
         ret
         
         
 DISPLY    PROC 
-        PUSH ax
-        MOV BX,OFFSET LED
-        MOV AL,byte ptr key_in
-      SUB al,30h
-      CMP al,09h
-      JNG  DIS2
-       SUB al,07h
-DIS2:  XLAT
-         MOV DX,a8255
-         OUT DX,AL                     ;输出显示数据，段码
-       POP AX
-         RET
+    PUSH ax
+    MOV BX,OFFSET LED
+    MOV AL,byte ptr key_in
+    SUB al,30h
+    CMP al,09h
+    JNG  DIS2
+    SUB al,07h
+DIS2:  
+    XLAT
+    MOV DX,a8255
+    OUT DX,AL                     ;输出显示数据，段码
+    POP AX
+    RET
 DISPLY    ENDP
 key endp
+
 delay proc 
-        push ax            ;delay 50ms--100ms
-        mov ah,0
-        int 1ah
-        mov bx,dx
+    push ax            ;delay 50ms--100ms
+    mov ah,0
+    int 1ah
+    mov bx,dx
 delay1:
-        mov ah,0
-        int 1ah
-        cmp bx,dx
-        jz delay1
-        mov bx,dx
+    mov ah,0
+    int 1ah
+    cmp bx,dx
+    jz delay1
+    mov bx,dx
 delay2:
-        mov ah,0
-        int 1ah
-        cmp bx,dx
-        jz delay2
-        pop ax
-       ret
+    mov ah,0
+    int 1ah
+    cmp bx,dx
+    jz delay2
+    pop ax
+   ret
 delay endp
 
 
 
 CLEAR           PROC
-                MOV AL,0ch
-                MOV DX, IO_ADDRESS
-                OUT DX,AL               ;设置CLEAR命令
-                CALL CMD_SETUP          ;启动LCD执行命令
-                RET
+    MOV AL,0ch
+    MOV DX, IO_ADDRESS
+    OUT DX,AL               ;设置CLEAR命令
+    CALL CMD_SETUP          ;启动LCD执行命令
+    RET
 CLEAR           ENDP
 
 FUNCUP          PROC
          ;      MOV AL, 0fH             ;LCD功能设置命令
          ;      OUT DX, AL
          ;      CALL CMD_SETUP
-                MOV AL, 34H             ;LCD显示状态命令
-                OUT DX, AL
-                CALL CMD_SETUP
-                RET
+    MOV AL, 34H             ;LCD显示状态命令
+    OUT DX, AL
+    CALL CMD_SETUP
+    RET
 FUNCUP           ENDP
 
 LCD_DISP        PROC
-                CMP CH, 2
-                JZ  DISP_SEC
-                MOV BYTE PTR HZ_ADR, 88H        ;第三行起始端口地址
-                ADD BX,16                        ;指向第二行信息
-                JMP  next
-DISP_SEC:       MOV BYTE PTR HZ_ADR,90H
-next:           mov cl,8
-continue:       push cx
-                MOV AL,HZ_ADR
-                MOV DX, IO_ADDRESS
-                OUT DX, AL
-                CALL CMD_SETUP          ;设定DDRAM地址命令
-                MOV AX,[BX]
-                PUSH AX
-                MOV AL,AH               ;先送汉字编码高位
-                MOV DX,IO_ADDRESS
-                OUT DX,AL
-                CALL DATA_SETUP         ;输出汉字编码高字节
-                CALL delayx             ;延迟
-                POP AX
-                MOV DX,IO_ADDRESS
-                OUT DX, AL
-                CALL DATA_SETUP         ;输出汉字编码低字节
-                CALL DELAYx
-                INC BX
-                INC BX                  ;修改显示内码缓冲区指针
-                INC BYTE PTR HZ_ADR     ;修改LCD显示端口地址
-                POP CX
-                DEC CL
-                JNZ  COntinue
-                RET
+    CMP CH, 2
+    JZ  DISP_SEC
+    MOV BYTE PTR HZ_ADR, 88H        ;第三行起始端口地址
+    ADD BX,16                        ;指向第二行信息
+    JMP  next
+DISP_SEC:       
+    MOV BYTE PTR HZ_ADR,90H
+next:           
+    mov cl,8
+continue:       
+    push cx
+    MOV AL,HZ_ADR
+    MOV DX, IO_ADDRESS
+    OUT DX, AL
+    CALL CMD_SETUP          ;设定DDRAM地址命令
+    MOV AX,[BX]
+    PUSH AX
+    MOV AL,AH               ;先送汉字编码高位
+    MOV DX,IO_ADDRESS
+    OUT DX,AL
+    CALL DATA_SETUP         ;输出汉字编码高字节
+    CALL delayx             ;延迟
+    POP AX
+    MOV DX,IO_ADDRESS
+    OUT DX, AL
+    CALL DATA_SETUP         ;输出汉字编码低字节
+    CALL DELAYx
+    INC BX
+    INC BX                  ;修改显示内码缓冲区指针
+    INC BYTE PTR HZ_ADR     ;修改LCD显示端口地址
+    POP CX
+    DEC CL
+    JNZ  COntinue
+    RET
 LCD_DISP   ENDP
 
 CMD_SETUP       PROC
-                MOV DX,IO_ADDRESS                ;指向8255端口控制端口
-                ADD DX,2
-                NOP
-                MOV AL,00000000B                ;PC1置0,pc0置0 （LCD I端=0，W端＝0）
-                OUT DX, AL
-                call delayx
-                NOP
-                MOV AL,00000100B                ;PC2置1 （LCD E端＝1）
-                OUT DX, AL
-                NOP
-                call delayx
-                MOV AL, 00000000B               ;PC2置0,（LCD E端置0）
-                OUT DX, AL
-                call delayx
+    MOV DX,IO_ADDRESS                ;指向8255端口控制端口
+    ADD DX,2
+    NOP
+    MOV AL,00000000B                ;PC1置0,pc0置0 （LCD I端=0，W端＝0）
+    OUT DX, AL
+    call delayx
+    NOP
+    MOV AL,00000100B                ;PC2置1 （LCD E端＝1）
+    OUT DX, AL
+    NOP
+    call delayx
+    MOV AL, 00000000B               ;PC2置0,（LCD E端置0）
+    OUT DX, AL
+    call delayx
 
-                RET
+    RET
 CMD_SETUP       ENDP
 
 DATA_SETUP      PROC
-                MOV DX,IO_ADDRESS                ;指向8255控制端口
-                ADD DX,2
-                MOV AL,00000001B                ;PC1置0，PC0=1 （LCD I端=1）
-                OUT DX, AL
-                NOP
-                call delayx
-                MOV AL,00000101B                ;PC2置1 （LCD E端＝1）
-                OUT DX, AL
-                NOP
-                call delayx
-                MOV AL, 00000001B               ;PC2置0,（LCD E端＝0）
-                OUT DX, AL
-                NOP
-                call delayx
-                RET
+    MOV DX,IO_ADDRESS                ;指向8255控制端口
+    ADD DX,2
+    MOV AL,00000001B                ;PC1置0，PC0=1 （LCD I端=1）
+    OUT DX, AL
+    NOP
+    call delayx
+    MOV AL,00000101B                ;PC2置1 （LCD E端＝1）
+    OUT DX, AL
+    NOP
+    call delayx
+    MOV AL, 00000001B               ;PC2置0,（LCD E端＝0）
+    OUT DX, AL
+    NOP
+    call delayx
+    RET
 DATA_SETUP      ENDP
 
 DELAYx          PROC
-                push cx
-                push dx
-                MOV CX, 0fffh
- x1:           loop   x1
-                pop dx
-                pop cx
-                RET
+    push cx
+    push dx
+    MOV CX, 0fffh
+ x1:           
+    loop x1
+    pop dx
+    pop cx
+    RET
 DELAYx          ENDP
 
 
