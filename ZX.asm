@@ -1,0 +1,639 @@
+IO_ADDRESS      equ  290H
+DATA SEGMENT
+TABLE DB 77H,0B7H,0D7H,0E7H,7BH,0BBH,0DBH,0EBH
+      DB 7DH,0BDH,0DDH,0EDH,7EH,0BEH,0DEH,0EEH
+LED   DB 3FH,66H,7FH,39H,06H,6DH,6FH,5EH,5BH,7DH,77H,79H
+      DB 4FH,07H,7CH,71H
+HZ_TAB1          DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+                DW 0BFAAH,0CBF8H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+HZ_TAB2          DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+                DW 0B4EDH,0CEF3H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H 
+HZ_TAB3          DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+                DW 0A3B9H,0C3EBH,0BAF3H,0D6D8H,0CAD4H,0A1A0H,0A1A0H,0A1A0H
+HAIGUAN      DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+                DW 0BAA3H,0B9D8H,0BFAAH,0CBF8H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+XIUGAI      DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+                DW 0D0DEH,0B8C4H,0C3DCH,0C2EBH,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+
+NUM        DW 0A3B0H,0A3B4H,0A3B8H,0A1A0H,0A3B1H,0A3B5H,0A3B9H,0A1A0H
+           DW 0A3B2H,0A3B6H,0A1A0H,0A1A0H,0A3B3H,0A3B7H,0A1A0H,0A1A0H
+KONG          DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+            DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+DJS       DW 0A3B0H,0A3B1H,0A3B2H,0A3B3H,0A3B4H,0A3B5H,0A3B6H,0A3B7H
+          DW   0A3B8H,0A3B9H
+SRMM     DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+        DW 0CAE4H,0C8EBH,0C3DCH,0C2EBH,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+XGCG          DW 0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+              DW 0D0DEH,0B8C4H,0B3C9H,0B9A6H,0A1A0H,0A1A0H,0A1A0H,0A1A0H
+
+
+
+
+
+HZ_ADR          DB  ?                   ;存放显示行起始端口地址
+SRC   DW 0000H,0000H,0000H,0000H,0000H,0000H
+INP   DW 0001H,0000H,0000H,0000H,0000H,0000H
+DATA ENDS
+
+
+CODE SEGMENT
+ASSUME CS:CODE,DS:DATA
+
+
+START:
+MOV AX,DATA
+MOV DS,AX
+MOV DI,OFFSET SRC
+MOV SI,OFFSET INP
+
+MOV DX,293H
+MOV AL,10001010B
+OUT DX,AL
+
+MOV CX,0000H
+PUSH CX
+
+BEGAIN2:
+MOV DI,OFFSET SRC
+MOV SI,OFFSET INP
+MOV BYTE PTR HZ_ADR,90H
+
+BEGAIN:;输入密码
+
+MOV DX,290H
+MOV AL,00H
+OUT DX,AL
+
+MOV DX,291H
+OPEN:
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JNE OPEN
+
+PRE:
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JE PRE
+
+MOV CX,16EAH
+DELAY:
+LOOP DELAY
+
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JE PRE
+
+MOV AL,0FEH
+MOV CL,AL
+
+NEXTR:
+MOV DX,290H
+OUT DX,AL
+MOV DX,291H
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JNZ ENCODE
+ROL CL,01
+MOV AL,CL
+JMP NEXTR
+
+ENCODE:
+MOV BX,000FH
+IN AL,DX
+
+NEXTT:
+CMP AL,TABLE[BX]
+JE DONE
+DEC BX
+JNS NEXTT
+
+DONE:
+;MOV DX,292H;8255A的C口
+;MOV AL,LED[BX]
+;OUT DX,AL
+CMP BX,000FH
+JZ GAI2;修改密码
+CMP BX,000BH
+JZ ENT11;确认输入 
+CMP BX,0007H
+JZ H;海关锁键，显示开锁
+CMP BX,0003H
+JZ START_IN;重新输入
+
+
+MOV [SI],BX
+INC SI
+INC SI
+CALL DIS_NUM
+JMP BEGAIN
+H:JMP HAI
+START_IN:JMP INP2
+ENT11:JMP ENT
+GAI2:JMP GAI
+
+
+MODIFY:;修改密码
+MOV DI,OFFSET SRC
+MOV SI,OFFSET INP
+
+BEGAIN11:
+MOV DX,290H
+MOV AL,00H
+OUT DX,AL
+
+MOV DX,291H
+OPEN11:
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JNE OPEN11
+
+PRE11:
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JE PRE11
+
+MOV CX,16EAH 
+DELAY11:
+LOOP DELAY11
+
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JE PRE11
+
+MOV AL,0FEH
+MOV CL,AL
+
+NEXTR11:
+MOV DX,290H
+OUT DX,AL
+MOV DX,291H
+IN AL,DX
+AND AL,0FH
+CMP AL,0FH
+JNZ ENCODE11
+ROL CL,01
+MOV AL,CL
+JMP NEXTR11
+
+ENCODE11:
+MOV BX,000FH
+IN AL,DX
+
+NEXTT11:
+CMP AL,TABLE[BX]
+JE DONE11
+DEC BX
+JNS NEXTT11
+
+DONE11:
+;MOV DX,292H;8255A的C口
+;MOV AL,LED[BX]
+;OUT DX,AL
+CMP BX,000BH
+JZ BEGAINHH;确认修改
+CALL DIS_XING
+MOV [DI],BX
+INC DI
+INC DI
+JMP BEGAIN11
+BEGAINHH:JMP CG
+
+
+
+ENT:
+MOV DI,OFFSET SRC
+MOV SI,OFFSET INP
+MOV CX,0000H
+NEXT_ENTER:
+CMP CX,0006H
+JZ SUCC_REP2;输入密码正确
+MOV AX,[SI]
+MOV BX,[DI]
+INC CX
+
+INC DI
+INC DI
+INC SI
+INC SI
+
+CMP AX,BX
+JZ NEXT_ENTER
+JMP ERRO;输入密码错误
+SUCC_REP2:JMP SUCC
+
+
+
+
+ERRO:
+START111:
+MOV AL,00110101B;以下两部分为8253内容
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,280H
+OUT DX,AL
+MOV AL,10H
+MOV DX,280H
+OUT DX,AL
+
+MOV AL,01110111B
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,281H
+OUT DX,AL
+MOV AL,20H
+MOV DX,281H
+OUT DX,AL
+
+POP CX
+INC CX
+CMP CX,02H
+JZ PAUSE2
+PUSH CX
+
+                
+mov al,0ffh
+mov dx,IO_ADDRESS
+out dx, al
+CALL CLEAR              ;LCD 清除
+;CALL FUNCUP              ;LCD 功能设置
+LEA BX,  HZ_TAB2
+MOV CH,2                        ;显示第2行信息 
+CALL  LCD_DISP
+LEA BX, HZ_TAB2
+MOV CH,3                  ;    显示第3行信息
+CALL LCD_DISP
+l1: JMP BEGAIN2
+PAUSE2:JMP PAUSE
+
+
+CLEAR           PROC
+                MOV AL,0CH
+                MOV DX, IO_ADDRESS
+                OUT DX,AL               ;设置CLEAR命令
+                CALL CMD_SETUP          ;启动LCD执行命令
+                RET
+CLEAR           ENDP
+
+FUNCUP          PROC
+         ;      MOV AL, 0fH             ;LCD功能设置命令
+         ;      OUT DX, AL
+         ;      CALL CMD_SETUP
+                MOV AL, 34H             ;LCD显示状态命令
+                OUT DX, AL
+                CALL CMD_SETUP
+                RET
+FUNCUP           ENDP
+
+LCD_DISP        PROC
+                CMP CH, 2
+                JZ  DISP_SEC
+                MOV BYTE PTR HZ_ADR, 88H        ;第三行起始端口地址
+                ADD BX,16                        ;指向第二行信息
+                JMP  next
+DISP_SEC:       MOV BYTE PTR HZ_ADR,90H
+next:           mov cl,8
+continue:       push cx
+                MOV AL,HZ_ADR
+                MOV DX, IO_ADDRESS
+                OUT DX, AL
+                CALL CMD_SETUP          ;设定DDRAM地址命令
+                MOV AX,[BX]
+                PUSH AX
+                MOV AL,AH               ;先送汉字编码高位
+                MOV DX,IO_ADDRESS
+                OUT DX,AL
+                CALL DATA_SETUP         ;输出汉字编码高字节
+                CALL DELAY2              ;延迟
+                POP AX
+                MOV DX,IO_ADDRESS
+                OUT DX, AL
+                CALL DATA_SETUP         ;输出汉字编码低字节
+                CALL DELAY2
+                INC BX
+                INC BX                  ;修改显示内码缓冲区指针
+                INC BYTE PTR HZ_ADR     ;修改LCD显示端口地址
+                POP CX
+                DEC CL
+                JNZ  CONTINUE
+                RET
+LCD_DISP   ENDP
+
+CMD_SETUP       PROC
+                MOV DX,IO_ADDRESS                ;指向8255端口控制端口
+                ADD DX,2
+                NOP
+                MOV AL,00000000B                ;PC1置0,pc0置0 （LCD I端=0，W端＝0）
+                OUT DX, AL
+                call delay2
+                NOP
+                MOV AL,00000100B                ;PC2置1 （LCD E端＝1）
+                OUT DX, AL
+                NOP
+                call delay2
+                MOV AL, 00000000B               ;PC2置0,（LCD E端置0）
+                OUT DX, AL
+                call delay2
+
+                RET
+CMD_SETUP       ENDP
+
+DATA_SETUP      PROC
+                MOV DX,IO_ADDRESS                ;指向8255控制端口
+                ADD DX,2
+                MOV AL,00000001B                ;PC1置0，PC0=1 （LCD I端=1）
+                OUT DX, AL
+                NOP
+                call delay2
+                MOV AL,00000101B                ;PC2置1 （LCD E端＝1）
+                OUT DX, AL
+                NOP
+                call delay2
+                MOV AL, 00000001B               ;PC2置0,（LCD E端＝0）
+                OUT DX, AL
+                NOP
+                call delay2
+                RET
+DATA_SETUP      ENDP
+
+
+
+DELAY2          PROC
+                push cx
+                push dx
+                MOV CX, 0fffh
+ x1:            loop   x1
+                pop dx
+                pop cx
+                RET
+DELAY2          ENDP
+
+
+SUCC:
+START222:
+MOV AL,00110101B;以下两部分为8253内容
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,280H
+OUT DX,AL
+MOV AL,50H
+MOV DX,280H
+OUT DX,AL
+
+MOV AL,01110111B
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,281H
+OUT DX,AL
+MOV AL,80H
+MOV DX,281H
+OUT DX,AL
+
+                
+;8255初始化
+mov al,0ffh
+mov dx,IO_ADDRESS
+OUT DX,AL
+CALL CLEAR              ;LCD 清除
+;CALL FUNCUP              ;LCD 功能设置
+LEA BX,  HZ_TAB1
+MOV CH,2                ;显示第2行信息 
+CALL  LCD_DISP
+LEA BX, HZ_TAB1
+MOV CH,3                  ;    显示第3行信息
+CALL LCD_DISP
+l2: JMP START
+
+
+DIS_NUM PROC
+MOV AL,0ffh;初始
+MOV DX,IO_ADDRESS
+OUT DX,AL
+
+MOV AL,HZ_ADR;显示字地址
+MOV DX, IO_ADDRESS
+OUT DX, AL
+CALL CMD_SETUP          ;设定DDRAM地址命令
+
+MOV AL,02H
+MUL BL
+MOV BX,AX
+MOV AX,NUM[BX]
+PUSH AX
+MOV AL,AH               ;先送汉字编码高位
+MOV DX,IO_ADDRESS
+OUT DX,AL
+CALL DATA_SETUP         ;输出汉字编码高字节
+CALL DELAY2              ;延迟
+POP AX
+MOV DX,IO_ADDRESS
+OUT DX, AL
+CALL DATA_SETUP         ;输出汉字编码低字节
+CALL DELAY2
+INC BYTE PTR HZ_ADR     ;修改LCD显示端口地址
+RET
+DIS_NUM ENDP
+
+
+HAI:
+MOV AL,00110101B;以下两部分为8253内容
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,280H
+OUT DX,AL
+MOV AL,50H
+MOV DX,280H
+OUT DX,AL
+
+MOV AL,01110111B
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,281H
+OUT DX,AL
+MOV AL,80H
+MOV DX,281H
+OUT DX,AL
+           
+;8255初始化
+mov al,0ffh
+mov dx,IO_ADDRESS
+out dx, al
+CALL CLEAR              ;LCD 清除
+;CALL FUNCUP              ;LCD 功能设置
+LEA BX,  HAIGUAN
+MOV CH,2                        ;显示第2行信息 
+CALL  LCD_DISP
+LEA BX, HAIGUAN
+MOV CH,3                  ;    显示第3行信息
+CALL LCD_DISP
+l4: JMP BEGAIN2 ;l1
+
+GAI:
+STARTGAI:             
+mov al,0ffh
+mov dx,IO_ADDRESS
+out dx, al
+CALL CLEAR              ;LCD 清除
+;CALL FUNCUP              ;LCD 功能设置
+LEA BX,XIUGAI
+MOV CH,2                        ;显示第2行信息 
+CALL  LCD_DISP
+LEA BX,XIUGAI
+MOV CH,3                  ;    显示第3行信息
+CALL LCD_DISP
+JMP MODIFY 
+
+
+INP2:             
+mov al,0ffh
+mov dx,IO_ADDRESS
+out dx, al
+CALL CLEAR              ;LCD 清除
+LEA BX,KONG
+MOV CH,2                        ;显示第2行信息 
+CALL  LCD_DISP
+JMP START
+
+PAUSE:
+mov al,0ffh
+mov dx,IO_ADDRESS
+out dx, al
+CALL CLEAR              ;LCD 清除
+;CALL FUNCUP              ;LCD 功能设置
+LEA BX,  HZ_TAB3
+MOV CH,2                        ;显示第2行信息 
+CALL  LCD_DISP
+LEA BX, HZ_TAB3
+MOV CH,3                  ;    显示第3行信息
+CALL LCD_DISP
+
+MOV AL,00110101B;以下两部分为8253内容
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,280H
+OUT DX,AL
+MOV AL,20H
+MOV DX,280H
+OUT DX,AL
+
+MOV AL,01110111B
+MOV DX,283H
+OUT DX,AL
+MOV AL,00H
+MOV DX,281H
+OUT DX,AL
+MOV AL,10H
+MOV DX,281H
+OUT DX,AL
+
+MOV BX,18
+MOV CX,000AH
+RE1:
+MOV DX,292H
+IN AL,DX
+TEST AL,10000000B
+JNZ RE1
+RE2:
+MOV DX,292H
+IN AL,DX
+TEST AL,10000000B
+JZ RE2
+JMP RE3
+
+RE3:
+MOV AL,0ffh;初始
+MOV DX,IO_ADDRESS
+OUT DX,AL
+MOV AL,88H;显示字地址
+MOV DX, IO_ADDRESS
+OUT DX, AL
+CALL CMD_SETUP          ;设定DDRAM地址命令
+MOV AX,DJS[BX]
+PUSH AX
+MOV AL,AH               ;先送汉字编码高位
+MOV DX,IO_ADDRESS
+OUT DX,AL
+CALL DATA_SETUP         ;输出汉字编码高字节
+CALL DELAY2              ;延迟
+POP AX
+MOV DX,IO_ADDRESS
+OUT DX, AL
+CALL DATA_SETUP         ;输出汉字编码低字节
+CALL DELAY2
+DEC BX
+DEC BX
+DEC CX
+CMP CX,0000H
+JZ SHURUMIMA
+JMP RE1
+
+
+SHURUMIMA:
+mov al,0ffh
+mov dx,IO_ADDRESS
+OUT DX,AL
+CALL CLEAR              ;LCD 清除
+;CALL FUNCUP              ;LCD 功能设置
+LEA BX,SRMM
+MOV CH,2                ;显示第2行信息 
+CALL  LCD_DISP
+LEA BX, SRMM
+MOV CH,3                  ;    显示第3行信息
+CALL LCD_DISP
+JMP START
+
+CG:               
+mov al,0ffh
+mov dx,IO_ADDRESS
+out dx, al
+CALL CLEAR              ;LCD 清除
+;CALL FUNCUP              ;LCD 功能设置
+LEA BX,XGCG
+MOV CH,2                        ;显示第2行信息 
+CALL  LCD_DISP
+LEA BX, XGCG
+MOV CH,3                  ;    显示第3行信息
+CALL LCD_DISP
+JMP START
+
+DIS_XING PROC
+MOV AL,0ffh;初始
+MOV DX,IO_ADDRESS
+OUT DX,AL
+
+MOV AL,HZ_ADR;显示字地址
+MOV DX, IO_ADDRESS
+OUT DX, AL
+CALL CMD_SETUP          ;设定DDRAM地址命令
+
+MOV AX,0A3AAH
+PUSH AX
+MOV AL,AH               ;先送汉字编码高位
+MOV DX,IO_ADDRESS
+OUT DX,AL
+CALL DATA_SETUP         ;输出汉字编码高字节
+CALL DELAY2              ;延迟
+POP AX
+MOV DX,IO_ADDRESS
+OUT DX, AL
+CALL DATA_SETUP         ;输出汉字编码低字节
+CALL DELAY2
+INC BYTE PTR HZ_ADR     ;修改LCD显示端口地址
+RET
+DIS_XING ENDP
+
+CODE ENDS
+END START
